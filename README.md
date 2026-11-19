@@ -1,144 +1,88 @@
 # RegiBot Hub
 
-A small self-hosted dashboard that collects [RegiBot](https://github.com/) catch reports from a Discord channel
-and shows every account, catch, shiny, hundo and your current inventory in one place. Single Python file, SQLite database, no build step.
+A lightweight, self-hosted dashboard for RegiBot catch reports. Tracks accounts, catches, shinies, hundos, and inventory using Python and SQLite.
 
-- **Accounts** view: per-trainer stats, collection grid and recent catches
-- **Inventory** view: everything you currently hold, grouped by species, with search and a "Traded away" button
-- Live updates without page reloads
-- Only **caught** events are stored. "Encountered" messages are ignored.
-- Every Discord message is stored **once** (by message id), so restarts or re-polls never create duplicates
+## Features
 
-## 1. Install
+- Account stats, collections, and recent catches
+- Searchable inventory with trade tracking and undo
+- Live updates; only caught events are saved
+- Prevents duplicate Discord messages
 
-You need Python 3.9+.
+## Setup
+
+Requires Python 3.9+.
 
 ```bash
 git clone https://github.com/gengily/dashboardpy.git
 cd dashboardpy
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## 2. Create the Discord bot
+Create a bot in the [Discord Developer Portal](https://discord.com/developers/applications). Enable **Message Content Intent**, then invite it with **View Channels** and **Read Message History** permissions. Copy the bot token and the ID of RegiBot’s channel.
 
-RegiBot posts to a normal Discord webhook. The hub reads that channel with a bot of your own.
+## Run
 
-1. Open the [Discord Developer Portal](https://discord.com/developers/applications) and click **New Application**.
-2. Go to **Bot**, click **Reset Token** and copy the token. Keep it secret.
-3. On the same page enable **Message Content Intent** (without it the bot sees messages without their embeds).
-4. Go to **OAuth2 > URL Generator**, tick the scope `bot`, then the permissions **View Channels** and **Read Message History**.
-   Open the generated URL and add the bot to your server.
-5. In Discord enable **Settings > Advanced > Developer Mode**, right-click the channel RegiBot posts in and choose **Copy Channel ID**.
-
-## 3. Run it
+Set your environment variables and start the app:
 
 ```bash
-export SECRET="a-long-random-string"
-export DISCORD_TOKEN="your bot token"
-export CHANNEL_ID="your channel id"
+export SECRET="use-a-long-random-string"
+export DISCORD_TOKEN="your-bot-token"
+export CHANNEL_ID="your-channel-id"
 python webhook_hub.py
 ```
 
-Windows PowerShell:
+Open `http://localhost:8080/?key=YOUR_SECRET`.
 
-```powershell
-$env:SECRET="a-long-random-string"; $env:DISCORD_TOKEN="..."; $env:CHANNEL_ID="..."; python webhook_hub.py
-```
+The hub starts collecting from the current time. Set `BACKFILL=1` to import existing channel history.
 
-Open `http://localhost:8080/?key=a-long-random-string`.
+## Dashboard
 
-By default the hub starts **from now** and ignores older channel history. To import the history once, start it with `BACKFILL=1`.
+- **Accounts:** Trainer stats, catches, and collections
+- **Inventory:** Pokémon grouped by species, with search and trade controls
+- **Filters:** All, Shiny, Hundo, or Background
+- **Appearance:** Choose a theme and accent color
 
-## 4. Using the dashboard
+Accounts ending in five or more digits are hidden by default. Set `SHOW_OLD=1` to show them.
 
-| Where | What it does |
-| --- | --- |
-| **Accounts** tab | Totals, recent catches and one card per trainer. Tap a trainer for their collection. |
-| **Inventory** tab | Everything held, grouped by species. Expand a card to see each Pokémon. |
-| **Traded away** | Marks one Pokémon as traded. It leaves your counts. Use **Undo** or the **Show traded** toggle to bring it back. |
-| **Palette button** (top right) | Pick **Auto / Light / Dark** and an accent color (Ocean, Rose, Forest, Violet, Sunset). Saved in your browser. |
-| Filters | All / Shiny / Hundo / Background |
-| Search | Pokémon name or account name (Inventory) |
+## Configuration
 
-Only accounts whose name ends in 1 to 4 digits are shown (for example `Ash1234`). Names with 5 or more trailing digits are treated as old accounts and hidden. Set `SHOW_OLD=1` to show everything.
-
-## 5. Settings
-
-All settings are environment variables.
-
-| Variable | Default | Meaning |
+| Variable | Default | Description |
 | --- | --- | --- |
-| `SECRET` | `change-me` | Password for the dashboard (`?key=...`). **Change it.** |
-| `DISCORD_TOKEN` | none | Bot token. Without it only the webhook endpoint runs. |
-| `CHANNEL_ID` | none | Channel RegiBot posts in. |
-| `BACKFILL` | off | `1` imports the existing channel history on first start. |
-| `POLL_SECS` | `4` | How often Discord is polled. |
-| `DB` | `hub.db` | SQLite file path. |
-| `PORT` | `8080` | HTTP port. |
-| `SHOW_OLD` | off | `1` disables the old-account filter. |
-| `SOURCE_URL` | `https://github.com/gengily/dashboardpy` | Repository link shown in the footer. Forks must point this at their own source (see License). |
-| `DISCORD_URL` | `https://discord.gg/Y72EpmWj9M` | Discord invite shown in the footer. |
+| `SECRET` | `change-me` | Dashboard access key. Change this. |
+| `DISCORD_TOKEN` | — | Discord bot token |
+| `CHANNEL_ID` | — | RegiBot’s channel ID |
+| `BACKFILL` | off | Import existing messages when set to `1` |
+| `POLL_SECS` | `4` | Discord polling interval |
+| `DB` | `hub.db` | SQLite database path |
+| `PORT` | `8080` | HTTP port |
+| `SHOW_OLD` | off | Show all accounts when set to `1` |
 
-### Optional: direct webhook instead of the bot
+Alternatively, configure RegiBot to send directly to:
 
-If your RegiBot version accepts a custom webhook URL you can point it at
-`http://YOUR_HOST:8080/api/webhooks/anything/<SECRET>` and skip the Discord bot. Use one method or the other, not both,
-otherwise the same catch arrives twice with different ids.
+`http://YOUR_HOST:8080/api/webhooks/anything/YOUR_SECRET`
 
-## 6. Running it permanently
+Use either the webhook or the Discord bot, not both.
 
-- Put it behind HTTPS (Caddy or nginx reverse proxy) or a VPN such as Tailscale. The secret travels in the URL, so do not expose it over plain HTTP on the internet.
-- Example systemd unit:
+## Stop or Shut Down
 
-```ini
-[Unit]
-Description=RegiBot Hub
-After=network-online.target
+- **Running in a terminal:** Press `Ctrl+C`.
+- **Running as a systemd service:** Stop it with:
+  `sudo systemctl stop regibot-hub`
+- **Prevent it from starting at boot:**
+  `sudo systemctl disable regibot-hub`
+- **Stop data collection:** Stop the app and remove its bot from the server, or disable the webhook in RegiBot.
 
-[Service]
-WorkingDirectory=/opt/regibot-hub
-EnvironmentFile=/opt/regibot-hub/.env
-ExecStart=/opt/regibot-hub/.venv/bin/python webhook_hub.py
-Restart=always
+Replace `regibot-hub` with your actual service name if it differs.
 
-[Install]
-WantedBy=multi-user.target
-```
+## Backups and Security
 
-`.env` contains lines like `SECRET=...`, `DISCORD_TOKEN=...`, `CHANNEL_ID=...`. Never commit it.
+Back up `hub.db` to preserve your data. Use HTTPS or a VPN before exposing the dashboard; the access key is included in the URL. Never commit tokens or secrets.
 
-## 7. Backups and cleanup
+## License and Contact
 
-Everything lives in `hub.db`. Copy that file to back up. Upgrading from an older version needs no action, the database is migrated on start.
+See the project repository for license and contact details:
 
-Old "encountered" rows from earlier versions are already hidden everywhere. To delete them for good:
-
-```bash
-sqlite3 hub.db "DELETE FROM events WHERE event='encountered';"
-```
-
-## Troubleshooting
-
-| Symptom | Fix |
-| --- | --- |
-| Log says messages had **NO embeds** | Enable **Message Content Intent** in the Developer Portal. |
-| `HTTP 403` / `404` in the log | Wrong channel id, or the bot cannot see that channel. |
-| Dashboard shows nothing | Check the account name rule above, or set `SHOW_OLD=1`. Without `BACKFILL=1` old messages are skipped. |
-| Page returns 404 | The `?key=` in the URL does not match `SECRET`. |
-
-## Community
-
-- Discord: https://discord.gg/Y72EpmWj9M
-- GitHub: https://github.com/gengily/dashboardpy
-
-## License
-
-Copyright (C) 2026 gengily
-
-Licensed under the **GNU Affero General Public License v3.0 or later** (AGPL-3.0-or-later), see the `LICENSE` file.
-
-- You may use, modify and share it freely.
-- You must keep the copyright and license notices, so the original author stays credited.
-- If you publish a modified version, or let other people use it over a network, you must release your source under the same license and offer it to those users (set `SOURCE_URL` to your fork).
+https://github.com/gengily/dashboardpy
