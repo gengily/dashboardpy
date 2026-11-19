@@ -1,0 +1,3053 @@
+
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f9ff">
+<title>RegiBot Hub (demo)</title>
+<script>
+/* apply the saved theme before first paint so the page never flashes the wrong colours */
+(function(){try{var d=document.documentElement,m=localStorage.getItem('hub-mode'),a=localStorage.getItem('hub-accent');
+if(m==='light'||m==='dark')d.dataset.mode=m;if(a&&a!=='ocean')d.dataset.accent=a;}catch(e){}})();
+</script>
+<style>
+/* light */
+:root{color-scheme:light dark;--bg:#f6f9ff;--surface:#e9eff8;--surface-hi:#dae3f0;--on-surface:#171c23;--on-var:#414856;--outline:#bcc6d6;--p:#00629d;--on-p:#fff;--pc:#9ed5ff;--on-pc:#001d33;--s:#4e6076;--sc:#d1e2f6;--on-sc:#0a1d2f;--t:#7a4f8d;--tc:#f1d8ff;--on-tc:#2f0f40;--gold:#ffdf8e;--on-gold:#3f2e00;
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --font:"Google Sans Flex","Google Sans",Roboto,system-ui,-apple-system,"Segoe UI",sans-serif}
+:root[data-mode=light]{color-scheme:light}
+:root[data-mode=dark]{color-scheme:dark}
+:root[data-accent=rose]{--bg:#fff8f8;--surface:#f8eaec;--surface-hi:#f0dadd;--on-surface:#22191b;--on-var:#524345;--outline:#d5c1c4;--p:#a8315a;--on-p:#fff;--pc:#ffd9e2;--on-pc:#3e001d;--s:#75565d;--sc:#ffd9e0;--on-sc:#2b151a;--t:#7b5733;--tc:#ffddb9;--on-tc:#2b1700;--gold:#ffdf8e;--on-gold:#3f2e00}
+:root[data-accent=forest]{--bg:#f6fbf4;--surface:#e8f1e6;--surface-hi:#d8e6d6;--on-surface:#171d17;--on-var:#414942;--outline:#bccabb;--p:#1f6a3b;--on-p:#fff;--pc:#a8f2b8;--on-pc:#00210d;--s:#52634f;--sc:#d5e8d0;--on-sc:#101f10;--t:#39656b;--tc:#bcebf2;--on-tc:#001f23;--gold:#ffdf8e;--on-gold:#3f2e00}
+:root[data-accent=violet]{--bg:#fbf8ff;--surface:#efe9f8;--surface-hi:#e2daef;--on-surface:#1c1a22;--on-var:#494554;--outline:#cbc3d8;--p:#6445b6;--on-p:#fff;--pc:#e6deff;--on-pc:#1f0a5a;--s:#625b71;--sc:#e8def8;--on-sc:#1d192b;--t:#7e5260;--tc:#ffd8e4;--on-tc:#31111d;--gold:#ffdf8e;--on-gold:#3f2e00}
+:root[data-accent=sunset]{--bg:#fff8f4;--surface:#f7ebe2;--surface-hi:#eddccf;--on-surface:#211a14;--on-var:#51443a;--outline:#d6c3b4;--p:#9a4600;--on-p:#fff;--pc:#ffdcc6;--on-pc:#321300;--s:#765846;--sc:#f9dfcb;--on-sc:#2b1709;--t:#5f6219;--tc:#e4e78f;--on-tc:#1c1d00;--gold:#ffdf8e;--on-gold:#3f2e00}
+/* dark: follows the system unless a mode is chosen */
+@media (prefers-color-scheme: dark){:root:not([data-mode=light]){--bg:#1a191f;--surface:#252a30;--surface-hi:#3b4858;--on-surface:#e4e2ea;--on-var:#c1c7d2;--outline:#4a5463;--p:#9ed5ff;--on-p:#00344f;--pc:#1f4d72;--on-pc:#cfe8ff;--s:#b9c9dc;--sc:#293645;--on-sc:#d3e4f8;--t:#dcbce9;--tc:#533c63;--on-tc:#f6dcff;--gold:#5f4a00;--on-gold:#ffe28f}
+:root:not([data-mode=light])[data-accent=rose]{--bg:#1d1517;--surface:#2a2023;--surface-hi:#3e3135;--on-surface:#ede0e1;--on-var:#d6c2c4;--outline:#594a4d;--p:#ffb1c8;--on-p:#650032;--pc:#8b1743;--on-pc:#ffd9e2;--s:#e5bdc6;--sc:#4a2f36;--on-sc:#ffd9e0;--t:#e9bf94;--tc:#5a4020;--on-tc:#ffddb9;--gold:#5f4a00;--on-gold:#ffe28f}
+:root:not([data-mode=light])[data-accent=forest]{--bg:#131a14;--surface:#1f2820;--surface-hi:#313d32;--on-surface:#dfe4dc;--on-var:#c0c9bf;--outline:#4a5a4c;--p:#8dd69e;--on-p:#00391b;--pc:#145229;--on-pc:#a8f2b8;--s:#b9ccb4;--sc:#3b4b39;--on-sc:#d5e8d0;--t:#a1ced5;--tc:#1f4d54;--on-tc:#bcebf2;--gold:#5f4a00;--on-gold:#ffe28f}
+:root:not([data-mode=light])[data-accent=violet]{--bg:#16131c;--surface:#231f2b;--surface-hi:#382f46;--on-surface:#e6e0e9;--on-var:#cbc4d2;--outline:#4f4860;--p:#cabeff;--on-p:#32128a;--pc:#4a2f9d;--on-pc:#e6deff;--s:#ccc2dc;--sc:#4a4458;--on-sc:#e8def8;--t:#efb8c8;--tc:#633b48;--on-tc:#ffd8e4;--gold:#5f4a00;--on-gold:#ffe28f}
+:root:not([data-mode=light])[data-accent=sunset]{--bg:#1a1410;--surface:#281f19;--surface-hi:#3d3027;--on-surface:#ede0d8;--on-var:#d5c3b8;--outline:#5a4a3e;--p:#ffb68a;--on-p:#532200;--pc:#763300;--on-pc:#ffdcc6;--s:#e5bfa8;--sc:#5a4130;--on-sc:#ffdcc6;--t:#c8cb76;--tc:#484a00;--on-tc:#e4e78f;--gold:#5f4a00;--on-gold:#ffe28f}}
+:root[data-mode=dark]{--bg:#1a191f;--surface:#252a30;--surface-hi:#3b4858;--on-surface:#e4e2ea;--on-var:#c1c7d2;--outline:#4a5463;--p:#9ed5ff;--on-p:#00344f;--pc:#1f4d72;--on-pc:#cfe8ff;--s:#b9c9dc;--sc:#293645;--on-sc:#d3e4f8;--t:#dcbce9;--tc:#533c63;--on-tc:#f6dcff;--gold:#5f4a00;--on-gold:#ffe28f}
+:root[data-mode=dark][data-accent=rose]{--bg:#1d1517;--surface:#2a2023;--surface-hi:#3e3135;--on-surface:#ede0e1;--on-var:#d6c2c4;--outline:#594a4d;--p:#ffb1c8;--on-p:#650032;--pc:#8b1743;--on-pc:#ffd9e2;--s:#e5bdc6;--sc:#4a2f36;--on-sc:#ffd9e0;--t:#e9bf94;--tc:#5a4020;--on-tc:#ffddb9;--gold:#5f4a00;--on-gold:#ffe28f}
+:root[data-mode=dark][data-accent=forest]{--bg:#131a14;--surface:#1f2820;--surface-hi:#313d32;--on-surface:#dfe4dc;--on-var:#c0c9bf;--outline:#4a5a4c;--p:#8dd69e;--on-p:#00391b;--pc:#145229;--on-pc:#a8f2b8;--s:#b9ccb4;--sc:#3b4b39;--on-sc:#d5e8d0;--t:#a1ced5;--tc:#1f4d54;--on-tc:#bcebf2;--gold:#5f4a00;--on-gold:#ffe28f}
+:root[data-mode=dark][data-accent=violet]{--bg:#16131c;--surface:#231f2b;--surface-hi:#382f46;--on-surface:#e6e0e9;--on-var:#cbc4d2;--outline:#4f4860;--p:#cabeff;--on-p:#32128a;--pc:#4a2f9d;--on-pc:#e6deff;--s:#ccc2dc;--sc:#4a4458;--on-sc:#e8def8;--t:#efb8c8;--tc:#633b48;--on-tc:#ffd8e4;--gold:#5f4a00;--on-gold:#ffe28f}
+:root[data-mode=dark][data-accent=sunset]{--bg:#1a1410;--surface:#281f19;--surface-hi:#3d3027;--on-surface:#ede0d8;--on-var:#d5c3b8;--outline:#5a4a3e;--p:#ffb68a;--on-p:#532200;--pc:#763300;--on-pc:#ffdcc6;--s:#e5bfa8;--sc:#5a4130;--on-sc:#ffdcc6;--t:#c8cb76;--tc:#484a00;--on-tc:#e4e78f;--gold:#5f4a00;--on-gold:#ffe28f}
+*{box-sizing:border-box;margin:0}
+html{-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--bg);color:var(--on-surface);
+  padding:env(safe-area-inset-top) 0 calc(40px + env(safe-area-inset-bottom));}
+a{color:inherit;text-decoration:none}
+main{max-width:860px;margin:0 auto;padding:0 16px;overflow-x:clip}
+
+/* ---------- top bar ---------- */
+.top{display:flex;align-items:center;gap:12px;padding:20px 0 8px}
+.top .grow{flex:1;min-width:0}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--p)}
+h1{font-size:clamp(38px,10vw,60px);line-height:1;font-weight:800;letter-spacing:-.03em;
+  overflow-wrap:anywhere;margin-top:4px}
+.icon-btn{width:52px;height:52px;display:grid;place-items:center;flex:none;border:0;cursor:pointer;
+  font:700 22px var(--font);background:var(--sc);color:var(--on-sc);border-radius:50%;
+  transition:border-radius .35s var(--spring),transform .35s var(--spring),background .2s}
+.icon-btn:hover{border-radius:18px}
+.icon-btn:active{transform:scale(.88);border-radius:14px}
+.icon-btn.spin:active{transform:rotate(180deg) scale(.9)}
+
+/* ---------- stat bento ---------- */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:18px 0 8px}
+@media(min-width:640px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{padding:18px 20px 16px;min-height:118px;display:flex;flex-direction:column;justify-content:space-between;
+  transition:transform .4s var(--spring),border-radius .4s var(--spring)}
+.stat:active{transform:scale(.96)}
+.stat b{font-size:clamp(38px,9vw,52px);line-height:1;font-weight:800;letter-spacing:-.03em}
+.stat>span{font-size:14px;font-weight:600;opacity:.85}
+.stat b.num{display:flex;align-items:center;gap:.14em}
+.stat b.num .ic{width:.8em;height:.8em}
+.stat:nth-child(1){background:var(--pc);color:var(--on-pc);border-radius:44px 14px 14px 14px}
+.stat:nth-child(2){background:var(--sc);color:var(--on-sc);border-radius:14px 44px 14px 14px}
+.stat:nth-child(3){background:var(--gold);color:var(--on-gold);border-radius:14px 14px 14px 44px}
+.stat:nth-child(4){background:var(--tc);color:var(--on-tc);border-radius:14px 14px 44px 14px}
+.stat:hover{border-radius:36px}
+
+/* ---------- section headings + segmented filter ---------- */
+.sec{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:34px 0 12px}
+h2{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.seg{display:inline-flex;gap:2px;padding:3px;background:var(--surface-hi);border-radius:999px}
+.seg a{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:999px;font-size:14px;font-weight:600;color:var(--on-var);
+  transition:all .35s var(--spring)}
+.seg a.on{background:var(--p);color:var(--on-p);padding:9px 20px}
+.seg a:active{transform:scale(.92)}
+
+/* ---------- trainer cards ---------- */
+.trainers{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.trainer{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:center;padding:18px;
+  background:var(--surface);border-radius:32px;
+  transition:transform .45s var(--spring),border-radius .45s var(--spring),background .2s}
+.trainer:hover{background:var(--surface-hi);border-radius:44px 22px 44px 22px}
+.trainer:active{transform:scale(.95)}
+.avatar{width:64px;height:64px;display:grid;place-items:center;font-size:26px;font-weight:800;
+  transition:border-radius .6s var(--spring),transform .6s var(--spring)}
+.trainer:hover .avatar{transform:rotate(-8deg) scale(1.08)}
+.sh0{border-radius:50%;background:var(--pc);color:var(--on-pc)}
+.sh1{border-radius:30%;background:var(--tc);color:var(--on-tc)}
+.sh2{border-radius:50% 8% 50% 8%;background:var(--sc);color:var(--on-sc)}
+.sh3{border-radius:62% 38% 46% 54% / 60% 40% 60% 40%;background:var(--gold);color:var(--on-gold)}
+.trainer:hover .sh0{border-radius:34%}
+.trainer:hover .sh1{border-radius:50%}
+.trainer:hover .sh2{border-radius:8% 50% 8% 50%}
+.trainer:hover .sh3{border-radius:40% 60% 54% 46% / 40% 60% 40% 60%}
+.t-name{font-size:19px;font-weight:700;overflow-wrap:anywhere}
+.t-last{font-size:13px;color:var(--on-var)}
+.t-chips{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:999px;font-size:13px;
+  font-weight:600;background:var(--surface-hi);color:var(--on-var);white-space:nowrap}
+.chip.shiny{background:var(--gold);color:var(--on-gold)}
+.chip.hundo{background:var(--tc);color:var(--on-tc)}
+.chip.p{background:var(--pc);color:var(--on-pc)}
+a.chip{transition:transform .35s var(--spring)}
+a.chip:active{transform:scale(.9)}
+
+/* ---------- collection grid ---------- */
+.dex{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
+.mon{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:14px 8px 12px;
+  background:var(--surface);border-radius:28px;
+  transition:transform .45s var(--spring),border-radius .45s var(--spring)}
+.mon:hover{border-radius:40px 16px 40px 16px;transform:translateY(-3px)}
+.mon.is-shiny{background:var(--gold);color:var(--on-gold)}
+.mon img,.mon .ph{width:68px;height:68px;object-fit:contain}
+.mon b{font-size:14px;line-height:1.15;margin-top:4px}
+.mon small{font-size:12px;opacity:.8;font-weight:600}
+.ph{display:grid;place-items:center;font-size:26px;font-weight:800;background:var(--sc);color:var(--on-sc);border-radius:50%}
+
+/* ---------- catch list ---------- */
+.catches{list-style:none;padding:0;display:grid;gap:6px}
+.catch{display:flex;gap:14px;align-items:center;padding:12px 16px 12px 12px;background:var(--surface);
+  border-radius:28px;transition:transform .4s var(--spring),border-radius .4s var(--spring)}
+.catch:first-child{border-radius:36px 36px 12px 12px}
+.catch:last-child{border-radius:12px 12px 36px 36px}
+.catch:only-child{border-radius:36px}
+.catch:active{transform:scale(.97)}
+.catch.is-shiny{background:linear-gradient(100deg,var(--surface) 55%,var(--gold))}
+.thumb{width:68px;height:68px;flex:none;display:grid;place-items:center;background:var(--surface-hi);
+  border-radius:24px 24px 24px 10px;overflow:hidden;font-weight:800;font-size:24px;color:var(--p)}
+.thumb img{width:100%;height:100%;object-fit:contain}
+.catch .meta{min-width:0;display:grid;gap:4px}
+.c-title{font-size:17px;font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.c-sub{font-size:13px;color:var(--on-var)}
+.c-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+
+.empty{padding:36px 24px;text-align:center;background:var(--surface);border-radius:44px 16px 44px 16px;color:var(--on-var)}
+.empty b{display:block;font-size:20px;color:var(--on-surface);margin-bottom:4px}
+footer{margin-top:36px;text-align:center;font-size:13px}
+footer a{color:var(--on-var);text-decoration:underline}
+
+/* ---------- inventory ---------- */
+.tabs{margin:14px 0 0}
+.search{display:flex;align-items:center;gap:12px;padding:0 22px;height:56px;background:var(--surface-hi);
+  border-radius:999px;margin:18px 0 4px;transition:border-radius .4s var(--spring)}
+.search:focus-within{border-radius:20px;outline:2px solid var(--p)}
+.search input{flex:1;min-width:0;border:0;background:none;color:inherit;font:500 16px var(--font);outline:none}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:14px 0 12px}
+a.chip.tgl{padding:9px 16px;font-size:14px}
+a.chip.tgl.on{background:var(--p);color:var(--on-p)}
+.invs{display:grid;gap:8px}
+.inv{background:var(--surface);border-radius:32px;overflow:hidden;transition:border-radius .45s var(--spring)}
+.inv[open]{border-radius:36px 16px 36px 16px}
+.inv.is-shiny{background:linear-gradient(100deg,var(--surface) 55%,var(--gold))}
+.inv.gone{display:none}
+.inv summary{list-style:none;display:flex;gap:14px;align-items:center;padding:12px 20px 12px 12px;cursor:pointer}
+.inv summary::-webkit-details-marker{display:none}
+.inv .meta{flex:1;min-width:0;display:grid;gap:6px}
+.count{text-align:center;min-width:52px}
+.count b{display:block;font-size:30px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.count small{font-size:12px;font-weight:600;color:var(--on-var)}
+.rows{list-style:none;padding:4px 12px 14px;display:grid;gap:6px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px 10px 18px;
+  background:var(--bg);border-radius:22px}
+.row[hidden]{display:none}
+.row b{display:block;font-size:15px;overflow-wrap:anywhere}
+.row.traded{opacity:.6}.row.traded b{text-decoration:line-through}
+.tbtn{border:0;cursor:pointer;font:700 13px var(--font);padding:11px 16px;border-radius:999px;flex:none;
+  background:var(--tc);color:var(--on-tc);transition:transform .35s var(--spring),border-radius .35s var(--spring)}
+.tbtn:hover{border-radius:12px}.tbtn:active{transform:scale(.9)}
+.tbtn:disabled{opacity:.5}
+.row.traded .tbtn{background:var(--sc);color:var(--on-sc)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:16px;
+  max-width:calc(100% - 32px);padding:14px 14px 14px 22px;border-radius:22px;background:var(--on-surface);color:var(--bg);
+  font-size:14px;font-weight:600;transform:translate(-50%,160%);transition:transform .5s var(--spring);z-index:9}
+.toast.on{transform:translate(-50%,0)}
+.toast button{border:0;cursor:pointer;font:700 14px var(--font);padding:9px 16px;border-radius:999px;background:var(--p);color:var(--on-p)}
+
+@media(max-width:430px){.seg a{padding:9px 11px}.seg a.on{padding:9px 14px}}
+
+/* ---------- icons (inline SVG, Material-3-expressive style: rounded, soft joins) ---------- */
+.ic{width:1.15em;height:1.15em;flex:none;vertical-align:-.2em}
+.icon-btn .ic{width:24px;height:24px}
+.search .ic{width:22px;height:22px;color:var(--on-var)}
+.mon small{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:3px}
+.mon small .ic{width:13px;height:13px}
+.chip .ic{width:1.1em;height:1.1em;vertical-align:0}
+.ic-hundo{width:1.45em}
+.sw[data-accent=ocean]{--c:#00629d}
+.sw[data-accent=rose]{--c:#a8315a}
+.sw[data-accent=forest]{--c:#1f6a3b}
+.sw[data-accent=violet]{--c:#6445b6}
+.sw[data-accent=sunset]{--c:#9a4600}
+/* ---------- theme panel + footer links ---------- */
+.theme{position:fixed;z-index:20;top:calc(env(safe-area-inset-top) + 84px);right:max(16px,calc((100vw - 860px)/2 + 16px));
+  width:min(300px,calc(100vw - 32px));padding:18px;background:var(--surface);color:var(--on-surface);border-radius:32px 12px 32px 32px;
+  box-shadow:0 0 0 1px var(--outline),0 18px 48px rgba(0,0,0,.28);transform-origin:top right;
+  transform:scale(.85);opacity:0;visibility:hidden;transition:transform .4s var(--spring),opacity .2s,visibility 0s .4s}
+.theme.on{transform:none;opacity:1;visibility:visible;transition:transform .4s var(--spring),opacity .2s}
+.theme h3{font-size:14px;font-weight:700;margin:0 0 8px;color:var(--on-var)}
+.theme h3~h3{margin-top:16px}
+.theme .seg{display:flex}.theme .seg button{flex:1;justify-content:center}
+.seg button{display:inline-flex;align-items:center;gap:6px;padding:9px 12px;border:0;border-radius:999px;font:600 14px var(--font);
+  color:var(--on-var);background:none;cursor:pointer;transition:all .35s var(--spring)}
+.seg button.on{background:var(--p);color:var(--on-p)}.seg button:active{transform:scale(.92)}
+.sws{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:44px;height:44px;border:0;border-radius:50%;background:var(--c);cursor:pointer;display:grid;place-items:center;color:#fff;
+  transition:border-radius .35s var(--spring),transform .35s var(--spring)}
+.sw:hover{border-radius:14px}.sw:active{transform:scale(.88)}
+.sw .ic{width:22px;height:22px;opacity:0}.sw.on .ic{opacity:1}.sw.on{border-radius:14px}
+.links{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.links a.chip{padding:10px 18px;font-size:14px;text-decoration:none;transition:transform .35s var(--spring),border-radius .35s var(--spring)}
+.links a.chip:hover{border-radius:12px}.links a.chip:active{transform:scale(.92)}
+.links a.chip.d{background:var(--pc);color:var(--on-pc)}.links a.chip.g{background:var(--tc);color:var(--on-tc)}
+.sw:focus-visible,.seg button:focus-visible,.icon-btn:focus-visible,.links a:focus-visible{outline:2px solid var(--p);outline-offset:2px}
+
+/* ---------- entrance motion ---------- */
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:none}}
+.stat,.trainer,.mon,.catch,.inv{animation:pop .6s var(--spring) both;animation-delay:calc(min(var(--i,0),12) * 45ms)}
+/* a refresh / live update of the same screen must not replay the intro animations */
+.static .stat,.static .trainer,.static .mon,.static .catch,.static .inv{animation:none}
+.static .fresh{animation:pop .6s var(--spring) both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<body><script src="banner.js"></script>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-sparkle" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">
+    <path d="M10 6C10.64 10.4 13.6 13.36 18 14C13.6 14.64 10.64 17.6 10 22C9.36 17.6 6.4 14.64 2 14C6.4 13.36 9.36 10.4 10 6Z"/>
+    <path d="M19 2C19.32 4.2 20.8 5.68 23 6C20.8 6.32 19.32 7.8 19 10C18.68 7.8 17.2 6.32 15 6C17.2 5.68 18.68 4.2 19 2Z"/>
+  </symbol>
+  <symbol id="i-hundo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="1.5" y="4" width="21" height="16" rx="8" stroke-width="2"/>
+    <path d="M6.3 10.2 7.8 9v6.2" stroke-width="1.7"/>
+    <rect x="10.3" y="9" width="3" height="6.2" rx="1.5" stroke-width="1.7"/>
+    <rect x="15.2" y="9" width="3" height="6.2" rx="1.5" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="16" rx="5"/>
+    <circle cx="9" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+    <path d="M4.5 17.5 9.5 13.2 13 16.2 15.5 14 19.5 17.5"/>
+  </symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>
+  </symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21.5C12 21.5 5 15.2 5 9.8a7 7 0 0 1 14 0c0 5.4-7 11.7-7 11.7z"/><circle cx="12" cy="9.8" r="2.4"/>
+  </symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 12H5M11 5.5 4.5 12 11 18.5"/>
+  </symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 12A8 8 0 1 1 17.66 6.34"/><path d="M13.2 6.3H17.7V1.8"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12.5 9.5 17 19 7.5"/>
+  </symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 1.6-2-.5-1.2.3-2.5 1.7-2.5H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/>
+    <circle cx="7.5" cy="11" r="1.2" fill="currentColor" stroke="none"/><circle cx="10.5" cy="7.3" r="1.2" fill="currentColor" stroke="none"/><circle cx="15.2" cy="7.8" r="1.2" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/>
+  </symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17" /><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/>
+  </symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 4h14a2.5 2.5 0 0 1 2.5 2.5v8A2.5 2.5 0 0 1 19 17h-6.5L8 20.5V17H5a2.5 2.5 0 0 1-2.5-2.5v-8A2.5 2.5 0 0 1 5 4z"/><path d="M8 9.5h8M8 12.5h5"/>
+  </symbol>
+  <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8.5 7 3.5 12l5 5M15.5 7l5 5-5 5M13.5 5 10.5 19"/>
+  </symbol>
+</svg>
+
+<main>
+
+<header class="top">
+  
+  <div class="grow">
+    <p class="eyebrow">RegiBot Hub</p>
+    <h1>Accounts</h1>
+  </div>
+  <button class="icon-btn" data-theme-toggle aria-label="Theme" aria-haspopup="true" aria-expanded="false"><svg class="ic ic-palette" aria-hidden="true"><use href="#i-palette"/></svg></button>
+  <button class="icon-btn spin" onclick="refresh(this)" aria-label="Refresh"><svg class="ic ic-refresh" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+</header>
+
+<nav class="seg tabs">
+  <a class="on" href="index.html">Accounts</a>
+  <a class="" href="inventory.html">Inventory</a>
+</nav>
+
+
+<div id="view" data-idx="0" data-traded="0">
+
+
+<section class="stats">
+  
+    <div class="stat" style="--i:0"><b>100</b><span>Accounts</span></div>
+    <div class="stat" style="--i:1"><b>420</b><span>Caught</span></div>
+    <div class="stat" style="--i:2"><b class="num"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>103</b><span>Shinies</span></div>
+    <div class="stat" style="--i:3"><b>17</b><span>Hundos</span></div>
+  
+</section>
+
+
+
+<div class="sec">
+  <h2>Recent catches</h2>
+  <nav class="seg">
+    
+    <a class="" href="index.html">All</a>
+    <a class="on" href="accounts-shiny.html"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</a>
+    <a class="" href="accounts-hundo.html"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>Hundo</a>
+    <a class="" href="accounts-bg.html"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>BG</a>
+  </nav>
+</div>
+
+<ul class="catches">
+  
+  <li class="catch is-shiny" data-id="4" style="--i:0">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/104.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Cubone<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BravePebble8460 · Wild · 1h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/9/13 (71%)</span>
+        <span class="chip">CP 2663</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.44177,25.17714"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="7" style="--i:1">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/137.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Porygon<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BrightFalcon3623 · Lure · 1h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/15/9 (76%)</span>
+        <span class="chip">CP 2800</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=59.93458,24.47436"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="8" style="--i:2">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/443.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Gible<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BrightMaple7890 · Raids · 1h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/8/12 (64%)</span>
+        <span class="chip">CP 3182</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.10901,24.3651"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="11" style="--i:3">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/447.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Riolu<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CobaltMaple5992 · Incense · 2h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/11/8 (62%)</span>
+        <span class="chip">CP 2105</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.99698,24.59766"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="14" style="--i:4">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/13.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Weedle<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperFox9999 · Incense · 2h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/9/6 (56%)</span>
+        <span class="chip">CP 218</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.4644,24.88037"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="29" style="--i:5">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/396.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Starly<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">DustyFox1200 · Quests · 5h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/15/11 (91%)</span>
+        <span class="chip">CP 2898</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.9279,25.17135"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="36" style="--i:6">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/696.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Tyrunt<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">GoldenHarbor9915 · Wild · 6h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/7/5 (49%)</span>
+        <span class="chip">CP 2306</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.94,25.1404"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="39" style="--i:7">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/810.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Grookey<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">HollowComet8900 · Wild · 6h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/14/11 (89%)</span>
+        <span class="chip">CP 2504</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.20904,24.43951"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="41" style="--i:8">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/79.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Slowpoke<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">HollowEmber8726 · Wild · 6h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/7/15 (71%)</span>
+        <span class="chip">CP 2926</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.13846,25.45882"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="45" style="--i:9">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/41.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Zubat<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">HollowMoss6234 · Raids · 7h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 13/10/8 (69%)</span>
+        <span class="chip">CP 1039</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.98044,24.847"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="49" style="--i:10">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/13.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Weedle<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LazyEmber198 · Wild · 8h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/15/7 (69%)</span>
+        <span class="chip">CP 690</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.06733,24.89612"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="50" style="--i:11">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/7.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Squirtle<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LazyOtter9144 · Lure · 8h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/10/10 (78%)</span>
+        <span class="chip">CP 217</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.97928,25.27503"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="56" style="--i:12">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/702.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Dedenne<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LuckyWillow9287 · Wild · 9h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 3/13/13 (64%)</span>
+        <span class="chip">CP 477</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.13187,24.74773"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="58" style="--i:13">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/302.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Sableye<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MellowFalcon8314 · Incense · 9h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 6/13/14 (73%)</span>
+        <span class="chip">CP 1382</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.5529,24.40822"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="62" style="--i:14">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/633.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Deino<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MistyDune4057 · Quests · 10h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/11/12 (73%)</span>
+        <span class="chip">CP 2823</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.93183,24.41883"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="64" style="--i:15">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/137.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Porygon<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MistyMaple5614 · Raids · 11h ago</div>
+      <div class="c-chips">
+        <span class="chip hundo">IV 15/15/15 (100%)</span>
+        <span class="chip">CP 2956</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.18586,24.87492"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="67" style="--i:16">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/104.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Cubone<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MistyOrchid9015 · Raids · 11h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/13/6 (64%)</span>
+        <span class="chip">CP 1980</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.46562,25.20052"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="68" style="--i:17">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/396.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Starly<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">NeonComet6469 · Wild · 11h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 11/9/15 (78%)</span>
+        <span class="chip">CP 2298</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.36726,24.53719"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="71" style="--i:18">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/610.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Axew<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">QuietBasil3715 · Raids · 12h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/11/14 (78%)</span>
+        <span class="chip">CP 1706</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.41741,25.40125"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="85" style="--i:19">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/137.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Porygon<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">StormyHeron885 · Incense · 14h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 12/7/15 (76%)</span>
+        <span class="chip">CP 2905</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.18925,25.3194"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="86" style="--i:20">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/813.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Scorbunny<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">StormyMaple8089 · Raids · 14h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/7/7 (64%)</span>
+        <span class="chip">CP 1526</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.32339,24.35288"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="87" style="--i:21">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/25.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Pikachu<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">SwiftDune5073 · Quests · 16h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/11/11 (69%)</span>
+        <span class="chip">CP 797</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.46691,25.41468"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="91" style="--i:22">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/52.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Meowth<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">VelvetCinder2754 · Lure · 16h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 8/15/12 (78%)</span>
+        <span class="chip">CP 2548</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.31183,25.14989"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="96" style="--i:23">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/418.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Buizel<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">WanderingFalcon1187 · Lure · 17h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/1/14 (67%)</span>
+        <span class="chip">CP 2269</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.87041,25.24082"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="98" style="--i:24">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/246.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Larvitar<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">WanderingOtter1965 · Lure · 18h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/8/14 (69%)</span>
+        <span class="chip">CP 1296</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.00085,25.3202"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="106" style="--i:25">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/54.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Psyduck<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">RapidOtter3421 · Lure · 19h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 13/14/14 (91%)</span>
+        <span class="chip">CP 2939</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.03686,25.31847"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="108" style="--i:26">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/228.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Houndour<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">HollowTundra5727 · Wild · 19h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/13/14 (80%)</span>
+        <span class="chip">CP 2411</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.80646,24.90221"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="109" style="--i:27">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/418.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Buizel<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">RapidOtter3421 · Quests · 19h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 7/11/12 (67%)</span>
+        <span class="chip">CP 114</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.29246,24.43377"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="110" style="--i:28">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/77.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Ponyta<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BravePebble8460 · Raids · 20h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/12/15 (93%)</span>
+        <span class="chip">CP 2873</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.0735,25.11677"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="118" style="--i:29">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/624.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Pawniard<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperLynx1408 · Wild · 21h ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 6/12/9 (60%)</span>
+        <span class="chip">CP 2490</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.87743,24.94376"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="135" style="--i:30">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/633.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Deino<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BrightBasil6537 · Raids · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 5/4/15 (53%)</span>
+        <span class="chip">CP 135</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=59.81481,25.07676"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="136" style="--i:31">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Caterpie<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LuckyEmber7702 · Raids · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 11/9/12 (71%)</span>
+        <span class="chip">CP 2286</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.954,25.08241"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="138" style="--i:32">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/137.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Porygon<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">QuietOtter9029 · Lure · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 8/8/15 (69%)</span>
+        <span class="chip">CP 2638</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.2142,24.55818"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="148" style="--i:33">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/16.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Pidgey<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CrimsonHarbor6165 · Wild · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 3/15/12 (67%)</span>
+        <span class="chip">CP 1565</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.20518,24.99857"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="163" style="--i:34">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/16.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Pidgey<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">AmberCinder2737 · Quests · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/13/13 (78%)</span>
+        <span class="chip">CP 2172</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.96882,24.79627"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="170" style="--i:35">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/443.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Gible<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">HollowMoss6234 · Raids · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/12/12 (87%)</span>
+        <span class="chip">CP 1444</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.8677,25.44798"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="174" style="--i:36">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/194.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Wooper<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">SilentQuartz4884 · Raids · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/11/15 (91%)</span>
+        <span class="chip">CP 620</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.3521,25.22109"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="175" style="--i:37">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/142.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Aerodactyl<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LuckyQuartz6851 · Incense · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip hundo">IV 15/15/15 (100%)</span>
+        <span class="chip">CP 2720</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.97902,24.46784"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="176" style="--i:38">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/13.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Weedle<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">DustyRaven6321 · Raids · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 13/9/13 (78%)</span>
+        <span class="chip">CP 2408</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.52952,24.68018"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="177" style="--i:39">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Caterpie<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">SilentQuartz4884 · Lure · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 8/10/12 (67%)</span>
+        <span class="chip">CP 299</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.83963,24.54553"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="183" style="--i:40">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/636.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Larvesta<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">VelvetPebble1802 · Lure · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 11/15/9 (78%)</span>
+        <span class="chip">CP 2670</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=59.92841,24.88949"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="187" style="--i:41">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/722.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Rowlet<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperOrchid643 · Wild · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/12/13 (89%)</span>
+        <span class="chip">CP 698</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.01685,24.72219"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="198" style="--i:42">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/43.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Oddish<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">HollowTundra5727 · Wild · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 8/5/4 (38%)</span>
+        <span class="chip">CP 3121</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.41459,24.75967"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="202" style="--i:43">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/374.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Beldum<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LazyCinder370 · Quests · 1d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/9/12 (69%)</span>
+        <span class="chip">CP 94</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.1727,25.51273"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="211" style="--i:44">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/43.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Oddish<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperPebble7110 · Wild · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 8/10/11 (64%)</span>
+        <span class="chip">CP 432</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.45681,24.74614"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="214" style="--i:45">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/722.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Rowlet<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperRaven1065 · Raids · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/11/15 (78%)</span>
+        <span class="chip">CP 1016</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=59.9641,25.42959"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="218" style="--i:46">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/239.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Elekid<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">DustyFox1200 · Wild · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/9/5 (51%)</span>
+        <span class="chip">CP 2831</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.20689,24.76303"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="219" style="--i:47">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/19.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Rattata<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperLynx1408 · Wild · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/13/9 (71%)</span>
+        <span class="chip">CP 2440</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.83,24.4764"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="220" style="--i:48">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/813.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Scorbunny<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">VelvetPebble1802 · Raids · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 14/8/9 (69%)</span>
+        <span class="chip">CP 3187</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.34334,24.37675"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="226" style="--i:49">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/418.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Buizel<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BravePebble8460 · Wild · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 7/6/11 (53%)</span>
+        <span class="chip">CP 358</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.35368,24.98281"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="233" style="--i:50">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/396.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Starly<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">RapidOtter3421 · Raids · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 13/14/9 (80%)</span>
+        <span class="chip">CP 328</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=60.12513,24.6269"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="235" style="--i:51">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/41.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Zubat<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LazyOtter9144 · Raids · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/15/8 (73%)</span>
+        <span class="chip">CP 619</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=59.84835,24.67675"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="236" style="--i:52">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/696.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Tyrunt<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LuckyQuartz6851 · Lure · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 11/11/8 (67%)</span>
+        <span class="chip">CP 180</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.38805,25.13734"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="242" style="--i:53">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/374.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Beldum<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BrightFalcon3623 · Wild · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 7/12/14 (73%)</span>
+        <span class="chip">CP 697</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.81127,25.43773"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="250" style="--i:54">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/13.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Weedle<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">VelvetMoss9164 · Lure · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/10/12 (71%)</span>
+        <span class="chip">CP 431</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.90963,25.42074"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="251" style="--i:55">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/19.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Rattata<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">DustyRaven6321 · Wild · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 4/12/13 (64%)</span>
+        <span class="chip">CP 2219</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.46981,24.73962"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="259" style="--i:56">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/698.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Amaura<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">ShadowFalcon9265 · Wild · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 6/13/5 (53%)</span>
+        <span class="chip">CP 3048</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.38532,24.44543"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="260" style="--i:57">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/63.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Abra<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">HollowFox5967 · Wild · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/10/10 (64%)</span>
+        <span class="chip">CP 2773</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=59.88586,25.17694"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="261" style="--i:58">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/58.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Growlithe<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BrightFalcon3623 · Wild · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/8/12 (67%)</span>
+        <span class="chip">CP 1744</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.33632,24.77492"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="264" style="--i:59">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/123.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Scyther<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LazyOtter9144 · Raids · 2d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/10/9 (64%)</span>
+        <span class="chip">CP 80</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.39997,24.6452"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="269" style="--i:60">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/19.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Rattata<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BraveEmber1342 · Wild · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/13/9 (82%)</span>
+        <span class="chip">CP 2032</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.02482,24.75395"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="271" style="--i:61">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/66.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Machop<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">DustyFox1200 · Quests · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 7/9/10 (58%)</span>
+        <span class="chip">CP 616</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.42633,25.28664"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="272" style="--i:62">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/147.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Dratini<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LuckyQuartz6851 · Wild · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/15/3 (62%)</span>
+        <span class="chip">CP 1855</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.93138,24.70212"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="275" style="--i:63">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/7.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Squirtle<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperRaven1065 · Raids · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 8/9/10 (60%)</span>
+        <span class="chip">CP 2182</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.41215,25.42388"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="279" style="--i:64">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/66.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Machop<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CobaltQuartz5402 · Lure · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 12/14/2 (62%)</span>
+        <span class="chip">CP 2071</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.14746,24.95079"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="280" style="--i:65">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/43.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Oddish<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">ShadowFalcon9265 · Incense · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 14/12/11 (82%)</span>
+        <span class="chip">CP 3086</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.14223,25.34153"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="281" style="--i:66">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/698.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Amaura<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">SilentHarbor8655 · Raids · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 5/5/7 (38%)</span>
+        <span class="chip">CP 1301</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.31228,24.81854"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="285" style="--i:67">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/16.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Pidgey<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LuckyWillow9287 · Wild · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 12/13/11 (80%)</span>
+        <span class="chip">CP 579</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.38832,24.51828"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="286" style="--i:68">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/725.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Litten<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">DustyEmber2946 · Wild · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 14/7/7 (62%)</span>
+        <span class="chip">CP 815</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.81476,24.48908"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="296" style="--i:69">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/302.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Sableye<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperMoss8712 · Raids · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/10/10 (78%)</span>
+        <span class="chip">CP 2688</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.12586,24.37068"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="306" style="--i:70">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/194.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Wooper<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">DustyOrchid2364 · Wild · 3d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/2/9 (47%)</span>
+        <span class="chip">CP 2936</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=60.43368,25.41087"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="307" style="--i:71">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/4.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Charmander<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">ShadowOrchid1145 · Raids · 4d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 7/15/10 (71%)</span>
+        <span class="chip">CP 2632</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.35085,25.00152"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="314" style="--i:72">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/137.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Porygon<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MellowTundra5925 · Wild · 4d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/15/11 (80%)</span>
+        <span class="chip">CP 2899</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.82637,24.99162"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="316" style="--i:73">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/194.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Wooper<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">QuietOtter9029 · Raids · 4d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 8/6/2 (36%)</span>
+        <span class="chip">CP 265</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.96202,24.6052"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="324" style="--i:74">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/41.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Zubat<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">WanderingThistle7302 · Raids · 4d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 9/8/13 (67%)</span>
+        <span class="chip">CP 300</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.17739,24.47364"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="341" style="--i:75">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/728.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Popplio<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">ShadowFalcon9265 · Wild · 4d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 7/14/13 (76%)</span>
+        <span class="chip">CP 1588</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.79126,25.24426"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="345" style="--i:76">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/359.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Absol<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MellowTundra5925 · Incense · 5d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/13/8 (80%)</span>
+        <span class="chip">CP 689</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=60.15004,24.98526"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="348" style="--i:77">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/41.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Zubat<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BrightBasil8135 · Raids · 5d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 13/14/13 (89%)</span>
+        <span class="chip">CP 1105</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=59.96412,25.39401"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="349" style="--i:78">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/16.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Pidgey<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MistyDune4057 · Wild · 5d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/7/10 (60%)</span>
+        <span class="chip">CP 1003</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.0994,25.4573"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="350" style="--i:79">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/636.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Larvesta<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MellowLynx8605 · Incense · 5d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 11/8/6 (56%)</span>
+        <span class="chip">CP 2254</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.43237,25.4268"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="351" style="--i:80">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Caterpie<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MellowTundra5925 · Raids · 5d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 8/9/4 (47%)</span>
+        <span class="chip">CP 407</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.9771,24.92589"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="354" style="--i:81">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/702.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Dedenne<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">HollowOtter3613 · Wild · 5d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/7/7 (64%)</span>
+        <span class="chip">CP 3110</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.01009,25.50069"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="355" style="--i:82">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/722.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Rowlet<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MellowFalcon3375 · Raids · 5d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 8/15/12 (78%)</span>
+        <span class="chip">CP 3173</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.29134,24.65505"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="356" style="--i:83">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/175.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Togepi<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">DustyFox1200 · Raids · 5d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 7/9/9 (56%)</span>
+        <span class="chip">CP 688</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.10298,24.38063"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="358" style="--i:84">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/374.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Beldum<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">BraveCinder9739 · Quests · 5d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 12/6/9 (60%)</span>
+        <span class="chip">CP 368</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.23878,24.71531"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="362" style="--i:85">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/63.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Abra<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">DustyFox1200 · Lure · 6d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/9/10 (76%)</span>
+        <span class="chip">CP 2961</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.08936,24.5488"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="368" style="--i:86">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/241.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Miltank<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">GoldenLynx68 · Raids · 6d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 7/8/11 (58%)</span>
+        <span class="chip">CP 319</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.27294,25.04396"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="372" style="--i:87">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/228.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Houndour<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LuckyEmber9552 · Raids · 6d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/12/11 (84%)</span>
+        <span class="chip">CP 1906</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=60.47697,25.23191"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="379" style="--i:88">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/147.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Dratini<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">AmberCinder2737 · Lure · 7d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/11/15 (80%)</span>
+        <span class="chip">CP 754</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.36651,25.20159"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="382" style="--i:89">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/92.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Gastly<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MellowFalcon3375 · Lure · 7d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 15/15/9 (87%)</span>
+        <span class="chip">CP 574</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.4919,24.40509"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="383" style="--i:90">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/215.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Sneasel<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">HollowComet8900 · Raids · 7d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/15/2 (60%)</span>
+        <span class="chip">CP 1422</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.33495,24.8111"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="386" style="--i:91">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/25.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Pikachu<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperThistle7475 · Wild · 7d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/9/11 (67%)</span>
+        <span class="chip">CP 1756</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.04252,24.63047"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="392" style="--i:92">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/41.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Zubat<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperLynx1408 · Wild · 8d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 11/14/8 (73%)</span>
+        <span class="chip">CP 1941</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=59.95063,24.71021"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="399" style="--i:93">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/698.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Amaura<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">HollowOtter3613 · Raids · 8d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 13/15/1 (64%)</span>
+        <span class="chip">CP 1630</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=60.24136,25.17101"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="404" style="--i:94">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Caterpie<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">AmberCinder2737 · Lure · 9d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/14/10 (76%)</span>
+        <span class="chip">CP 1234</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=60.06224,25.10552"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="405" style="--i:95">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/41.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Zubat<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">LuckyMarlin1029 · Wild · 9d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 5/14/9 (62%)</span>
+        <span class="chip">CP 1579</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.50439,25.28952"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="406" style="--i:96">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/58.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Growlithe<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">StormyHeron885 · Incense · 9d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 10/15/11 (80%)</span>
+        <span class="chip">CP 1091</span>
+        <span class="chip p"><svg class="ic ic-image" aria-hidden="true"><use href="#i-image"/></svg>Background</span>
+        <a class="chip p" href="https://maps.google.com/?q=60.19848,25.34104"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="408" style="--i:97">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/95.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Onix<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">RapidOtter3421 · Wild · 10d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 8/7/13 (62%)</span>
+        <span class="chip">CP 1322</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.51573,24.74553"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="409" style="--i:98">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/4.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Charmander<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">MellowLynx8605 · Lure · 10d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 13/12/9 (76%)</span>
+        <span class="chip">CP 2315</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.25063,24.45997"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+  <li class="catch is-shiny" data-id="410" style="--i:99">
+    <div class="thumb"><img loading="lazy" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/359.png" alt=""></div>
+    <div class="meta">
+      <div class="c-title">Absol<span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>Shiny</span></div>
+      <div class="c-sub">CopperRaven1065 · Quests · 10d ago</div>
+      <div class="c-chips">
+        <span class="chip ">IV 12/11/8 (69%)</span>
+        <span class="chip">CP 2641</span>
+        
+        <a class="chip p" href="https://maps.google.com/?q=60.41988,24.70138"><svg class="ic ic-pin" aria-hidden="true"><use href="#i-pin"/></svg>Map</a>
+      </div>
+    </div>
+  </li>
+  
+</ul>
+
+
+
+  <div class="sec"><h2>Trainers</h2></div>
+  
+  <div class="trainers">
+    
+    <a class="trainer" data-account="AmberCinder2737" style="--i:0" href="a/AmberCinder2737.html">
+      <div class="avatar sh0">A</div>
+      <div><div class="t-name">AmberCinder2737</div><div class="t-last">Active 1h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">12 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>3</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">6 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="BraveCinder9739" style="--i:1" href="a/BraveCinder9739.html">
+      <div class="avatar sh1">B</div>
+      <div><div class="t-name">BraveCinder9739</div><div class="t-last">Active 1h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">35 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="BraveEmber1342" style="--i:2" href="a/BraveEmber1342.html">
+      <div class="avatar sh2">B</div>
+      <div><div class="t-name">BraveEmber1342</div><div class="t-last">Active 1h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">20 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="BravePebble8460" style="--i:3" href="a/BravePebble8460.html">
+      <div class="avatar sh3">B</div>
+      <div><div class="t-name">BravePebble8460</div><div class="t-last">Active 1h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">5 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>3</span>
+        
+        <span class="chip">37 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="BrightBasil6537" style="--i:4" href="a/BrightBasil6537.html">
+      <div class="avatar sh0">B</div>
+      <div><div class="t-name">BrightBasil6537</div><div class="t-last">Active 1h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">9 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">36 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="BrightBasil8135" style="--i:5" href="a/BrightBasil8135.html">
+      <div class="avatar sh1">B</div>
+      <div><div class="t-name">BrightBasil8135</div><div class="t-last">Active 1h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">40 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="BrightFalcon3623" style="--i:6" href="a/BrightFalcon3623.html">
+      <div class="avatar sh2">B</div>
+      <div><div class="t-name">BrightFalcon3623</div><div class="t-last">Active 1h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">8 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>3</span>
+        
+        <span class="chip">27 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="BrightMaple7890" style="--i:7" href="a/BrightMaple7890.html">
+      <div class="avatar sh3">B</div>
+      <div><div class="t-name">BrightMaple7890</div><div class="t-last">Active 1h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">19 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="BrightMarlin4553" style="--i:8" href="a/BrightMarlin4553.html">
+      <div class="avatar sh0">B</div>
+      <div><div class="t-name">BrightMarlin4553</div><div class="t-last">Active 2h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">18 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="BrightRaven3266" style="--i:9" href="a/BrightRaven3266.html">
+      <div class="avatar sh1">B</div>
+      <div><div class="t-name">BrightRaven3266</div><div class="t-last">Active 2h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">21 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CobaltMaple5992" style="--i:10" href="a/CobaltMaple5992.html">
+      <div class="avatar sh2">C</div>
+      <div><div class="t-name">CobaltMaple5992</div><div class="t-last">Active 2h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">33 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CobaltMaple9354" style="--i:11" href="a/CobaltMaple9354.html">
+      <div class="avatar sh3">C</div>
+      <div><div class="t-name">CobaltMaple9354</div><div class="t-last">Active 2h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">22 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CobaltQuartz5402" style="--i:12" href="a/CobaltQuartz5402.html">
+      <div class="avatar sh0">C</div>
+      <div><div class="t-name">CobaltQuartz5402</div><div class="t-last">Active 2h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">8 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>2</span>
+        <span class="chip">27 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperFox9999" style="--i:13" href="a/CopperFox9999.html">
+      <div class="avatar sh1">C</div>
+      <div><div class="t-name">CopperFox9999</div><div class="t-last">Active 2h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">21 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperLynx1408" style="--i:14" href="a/CopperLynx1408.html">
+      <div class="avatar sh2">C</div>
+      <div><div class="t-name">CopperLynx1408</div><div class="t-last">Active 3h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">9 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>3</span>
+        
+        <span class="chip">29 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperMaple1890" style="--i:15" href="a/CopperMaple1890.html">
+      <div class="avatar sh3">C</div>
+      <div><div class="t-name">CopperMaple1890</div><div class="t-last">Active 3h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">24 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperMoss8712" style="--i:16" href="a/CopperMoss8712.html">
+      <div class="avatar sh0">C</div>
+      <div><div class="t-name">CopperMoss8712</div><div class="t-last">Active 3h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">5 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">16 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperOrchid643" style="--i:17" href="a/CopperOrchid643.html">
+      <div class="avatar sh1">C</div>
+      <div><div class="t-name">CopperOrchid643</div><div class="t-last">Active 3h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">6 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">16 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperPebble7110" style="--i:18" href="a/CopperPebble7110.html">
+      <div class="avatar sh2">C</div>
+      <div><div class="t-name">CopperPebble7110</div><div class="t-last">Active 3h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">37 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperRaven1065" style="--i:19" href="a/CopperRaven1065.html">
+      <div class="avatar sh3">C</div>
+      <div><div class="t-name">CopperRaven1065</div><div class="t-last">Active 4h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">11 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>3</span>
+        
+        <span class="chip">39 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperSparrow7354" style="--i:20" href="a/CopperSparrow7354.html">
+      <div class="avatar sh0">C</div>
+      <div><div class="t-name">CopperSparrow7354</div><div class="t-last">Active 4h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        
+        
+        <span class="chip">37 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperThistle2988" style="--i:21" href="a/CopperThistle2988.html">
+      <div class="avatar sh1">C</div>
+      <div><div class="t-name">CopperThistle2988</div><div class="t-last">Active 4h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">40 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperThistle7475" style="--i:22" href="a/CopperThistle7475.html">
+      <div class="avatar sh2">C</div>
+      <div><div class="t-name">CopperThistle7475</div><div class="t-last">Active 4h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">8 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">25 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CopperTundra7871" style="--i:23" href="a/CopperTundra7871.html">
+      <div class="avatar sh3">C</div>
+      <div><div class="t-name">CopperTundra7871</div><div class="t-last">Active 4h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        
+        
+        <span class="chip">33 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CrimsonHarbor6165" style="--i:24" href="a/CrimsonHarbor6165.html">
+      <div class="avatar sh0">C</div>
+      <div><div class="t-name">CrimsonHarbor6165</div><div class="t-last">Active 4h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">40 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CrimsonOtter4423" style="--i:25" href="a/CrimsonOtter4423.html">
+      <div class="avatar sh1">C</div>
+      <div><div class="t-name">CrimsonOtter4423</div><div class="t-last">Active 4h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">27 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="CrimsonPebble7360" style="--i:26" href="a/CrimsonPebble7360.html">
+      <div class="avatar sh2">C</div>
+      <div><div class="t-name">CrimsonPebble7360</div><div class="t-last">Active 4h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">24 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="DustyEmber2946" style="--i:27" href="a/DustyEmber2946.html">
+      <div class="avatar sh3">D</div>
+      <div><div class="t-name">DustyEmber2946</div><div class="t-last">Active 4h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">7 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">39 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="DustyFox1200" style="--i:28" href="a/DustyFox1200.html">
+      <div class="avatar sh0">D</div>
+      <div><div class="t-name">DustyFox1200</div><div class="t-last">Active 5h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">13 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>6</span>
+        
+        <span class="chip">11 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="DustyMarlin2962" style="--i:29" href="a/DustyMarlin2962.html">
+      <div class="avatar sh1">D</div>
+      <div><div class="t-name">DustyMarlin2962</div><div class="t-last">Active 5h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">8 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="DustyOrchid2364" style="--i:30" href="a/DustyOrchid2364.html">
+      <div class="avatar sh2">D</div>
+      <div><div class="t-name">DustyOrchid2364</div><div class="t-last">Active 5h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">5 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">39 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="DustyRaven6321" style="--i:31" href="a/DustyRaven6321.html">
+      <div class="avatar sh3">D</div>
+      <div><div class="t-name">DustyRaven6321</div><div class="t-last">Active 5h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">12 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">34 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="FrostyComet3801" style="--i:32" href="a/FrostyComet3801.html">
+      <div class="avatar sh0">F</div>
+      <div><div class="t-name">FrostyComet3801</div><div class="t-last">Active 5h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">30 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="FrostySparrow2491" style="--i:33" href="a/FrostySparrow2491.html">
+      <div class="avatar sh1">F</div>
+      <div><div class="t-name">FrostySparrow2491</div><div class="t-last">Active 5h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">22 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="GentleMeadow7842" style="--i:34" href="a/GentleMeadow7842.html">
+      <div class="avatar sh2">G</div>
+      <div><div class="t-name">GentleMeadow7842</div><div class="t-last">Active 6h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">37 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="GoldenHarbor9915" style="--i:35" href="a/GoldenHarbor9915.html">
+      <div class="avatar sh3">G</div>
+      <div><div class="t-name">GoldenHarbor9915</div><div class="t-last">Active 6h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">40 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="GoldenLynx68" style="--i:36" href="a/GoldenLynx68.html">
+      <div class="avatar sh0">G</div>
+      <div><div class="t-name">GoldenLynx68</div><div class="t-last">Active 6h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">8 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="GoldenRaven6805" style="--i:37" href="a/GoldenRaven6805.html">
+      <div class="avatar sh1">G</div>
+      <div><div class="t-name">GoldenRaven6805</div><div class="t-last">Active 6h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">30 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="HollowComet8900" style="--i:38" href="a/HollowComet8900.html">
+      <div class="avatar sh2">H</div>
+      <div><div class="t-name">HollowComet8900</div><div class="t-last">Active 6h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">11 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="HollowDune475" style="--i:39" href="a/HollowDune475.html">
+      <div class="avatar sh3">H</div>
+      <div><div class="t-name">HollowDune475</div><div class="t-last">Active 6h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        
+        
+        <span class="chip">28 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="HollowEmber8726" style="--i:40" href="a/HollowEmber8726.html">
+      <div class="avatar sh0">H</div>
+      <div><div class="t-name">HollowEmber8726</div><div class="t-last">Active 6h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">6 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">6 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="HollowFox418" style="--i:41" href="a/HollowFox418.html">
+      <div class="avatar sh1">H</div>
+      <div><div class="t-name">HollowFox418</div><div class="t-last">Active 6h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">39 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="HollowFox5967" style="--i:42" href="a/HollowFox5967.html">
+      <div class="avatar sh2">H</div>
+      <div><div class="t-name">HollowFox5967</div><div class="t-last">Active 7h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">22 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="HollowFox9279" style="--i:43" href="a/HollowFox9279.html">
+      <div class="avatar sh3">H</div>
+      <div><div class="t-name">HollowFox9279</div><div class="t-last">Active 7h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        
+        
+        <span class="chip">39 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="HollowMoss6234" style="--i:44" href="a/HollowMoss6234.html">
+      <div class="avatar sh0">H</div>
+      <div><div class="t-name">HollowMoss6234</div><div class="t-last">Active 7h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">20 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="HollowOtter3613" style="--i:45" href="a/HollowOtter3613.html">
+      <div class="avatar sh1">H</div>
+      <div><div class="t-name">HollowOtter3613</div><div class="t-last">Active 7h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">6 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">35 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="HollowTundra5727" style="--i:46" href="a/HollowTundra5727.html">
+      <div class="avatar sh2">H</div>
+      <div><div class="t-name">HollowTundra5727</div><div class="t-last">Active 7h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">13 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="LazyCinder370" style="--i:47" href="a/LazyCinder370.html">
+      <div class="avatar sh3">L</div>
+      <div><div class="t-name">LazyCinder370</div><div class="t-last">Active 8h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">16 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="LazyEmber198" style="--i:48" href="a/LazyEmber198.html">
+      <div class="avatar sh0">L</div>
+      <div><div class="t-name">LazyEmber198</div><div class="t-last">Active 8h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">32 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="LazyOtter9144" style="--i:49" href="a/LazyOtter9144.html">
+      <div class="avatar sh1">L</div>
+      <div><div class="t-name">LazyOtter9144</div><div class="t-last">Active 8h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">9 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>3</span>
+        
+        <span class="chip">39 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="LuckyEmber7702" style="--i:50" href="a/LuckyEmber7702.html">
+      <div class="avatar sh2">L</div>
+      <div><div class="t-name">LuckyEmber7702</div><div class="t-last">Active 8h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">36 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="LuckyEmber9552" style="--i:51" href="a/LuckyEmber9552.html">
+      <div class="avatar sh3">L</div>
+      <div><div class="t-name">LuckyEmber9552</div><div class="t-last">Active 9h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">29 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="LuckyMarlin1029" style="--i:52" href="a/LuckyMarlin1029.html">
+      <div class="avatar sh0">L</div>
+      <div><div class="t-name">LuckyMarlin1029</div><div class="t-last">Active 9h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">6 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">30 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="LuckyQuartz6851" style="--i:53" href="a/LuckyQuartz6851.html">
+      <div class="avatar sh1">L</div>
+      <div><div class="t-name">LuckyQuartz6851</div><div class="t-last">Active 9h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">9 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>3</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">33 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="LuckyThistle9359" style="--i:54" href="a/LuckyThistle9359.html">
+      <div class="avatar sh2">L</div>
+      <div><div class="t-name">LuckyThistle9359</div><div class="t-last">Active 9h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">5 caught</span>
+        
+        
+        <span class="chip">23 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="LuckyWillow9287" style="--i:55" href="a/LuckyWillow9287.html">
+      <div class="avatar sh3">L</div>
+      <div><div class="t-name">LuckyWillow9287</div><div class="t-last">Active 9h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">26 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MellowFalcon3375" style="--i:56" href="a/MellowFalcon3375.html">
+      <div class="avatar sh0">M</div>
+      <div><div class="t-name">MellowFalcon3375</div><div class="t-last">Active 9h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">8 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">38 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MellowFalcon8314" style="--i:57" href="a/MellowFalcon8314.html">
+      <div class="avatar sh1">M</div>
+      <div><div class="t-name">MellowFalcon8314</div><div class="t-last">Active 9h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">31 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MellowLynx8605" style="--i:58" href="a/MellowLynx8605.html">
+      <div class="avatar sh2">M</div>
+      <div><div class="t-name">MellowLynx8605</div><div class="t-last">Active 9h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">5 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">32 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MellowSparrow5573" style="--i:59" href="a/MellowSparrow5573.html">
+      <div class="avatar sh3">M</div>
+      <div><div class="t-name">MellowSparrow5573</div><div class="t-last">Active 10h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">21 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MellowTundra5925" style="--i:60" href="a/MellowTundra5925.html">
+      <div class="avatar sh0">M</div>
+      <div><div class="t-name">MellowTundra5925</div><div class="t-last">Active 10h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">8 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>3</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">27 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MistyDune4057" style="--i:61" href="a/MistyDune4057.html">
+      <div class="avatar sh1">M</div>
+      <div><div class="t-name">MistyDune4057</div><div class="t-last">Active 10h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">14 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MistyHeron4133" style="--i:62" href="a/MistyHeron4133.html">
+      <div class="avatar sh2">M</div>
+      <div><div class="t-name">MistyHeron4133</div><div class="t-last">Active 10h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">32 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MistyMaple5614" style="--i:63" href="a/MistyMaple5614.html">
+      <div class="avatar sh3">M</div>
+      <div><div class="t-name">MistyMaple5614</div><div class="t-last">Active 11h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">39 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MistyMarlin1663" style="--i:64" href="a/MistyMarlin1663.html">
+      <div class="avatar sh0">M</div>
+      <div><div class="t-name">MistyMarlin1663</div><div class="t-last">Active 11h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">36 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MistyOrchid8759" style="--i:65" href="a/MistyOrchid8759.html">
+      <div class="avatar sh1">M</div>
+      <div><div class="t-name">MistyOrchid8759</div><div class="t-last">Active 11h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">6 caught</span>
+        
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">37 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="MistyOrchid9015" style="--i:66" href="a/MistyOrchid9015.html">
+      <div class="avatar sh2">M</div>
+      <div><div class="t-name">MistyOrchid9015</div><div class="t-last">Active 11h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">29 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="NeonComet6469" style="--i:67" href="a/NeonComet6469.html">
+      <div class="avatar sh3">N</div>
+      <div><div class="t-name">NeonComet6469</div><div class="t-last">Active 11h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">15 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="NeonComet8446" style="--i:68" href="a/NeonComet8446.html">
+      <div class="avatar sh0">N</div>
+      <div><div class="t-name">NeonComet8446</div><div class="t-last">Active 11h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">3 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="NeonFox862" style="--i:69" href="a/NeonFox862.html">
+      <div class="avatar sh1">N</div>
+      <div><div class="t-name">NeonFox862</div><div class="t-last">Active 12h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">27 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="QuietBasil3715" style="--i:70" href="a/QuietBasil3715.html">
+      <div class="avatar sh2">Q</div>
+      <div><div class="t-name">QuietBasil3715</div><div class="t-last">Active 12h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">7 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">30 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="QuietComet1360" style="--i:71" href="a/QuietComet1360.html">
+      <div class="avatar sh3">Q</div>
+      <div><div class="t-name">QuietComet1360</div><div class="t-last">Active 12h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">5 caught</span>
+        
+        
+        <span class="chip">16 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="QuietOtter9029" style="--i:72" href="a/QuietOtter9029.html">
+      <div class="avatar sh0">Q</div>
+      <div><div class="t-name">QuietOtter9029</div><div class="t-last">Active 12h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">8 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>3</span>
+        
+        <span class="chip">33 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="RapidFalcon1409" style="--i:73" href="a/RapidFalcon1409.html">
+      <div class="avatar sh1">R</div>
+      <div><div class="t-name">RapidFalcon1409</div><div class="t-last">Active 12h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">39 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="RapidOtter3421" style="--i:74" href="a/RapidOtter3421.html">
+      <div class="avatar sh2">R</div>
+      <div><div class="t-name">RapidOtter3421</div><div class="t-last">Active 12h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">8 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>4</span>
+        
+        <span class="chip">13 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="RapidQuartz8074" style="--i:75" href="a/RapidQuartz8074.html">
+      <div class="avatar sh3">R</div>
+      <div><div class="t-name">RapidQuartz8074</div><div class="t-last">Active 12h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">15 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="RapidSparrow3349" style="--i:76" href="a/RapidSparrow3349.html">
+      <div class="avatar sh0">R</div>
+      <div><div class="t-name">RapidSparrow3349</div><div class="t-last">Active 12h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">9 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="ShadowFalcon9265" style="--i:77" href="a/ShadowFalcon9265.html">
+      <div class="avatar sh1">S</div>
+      <div><div class="t-name">ShadowFalcon9265</div><div class="t-last">Active 13h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">14 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>3</span>
+        
+        <span class="chip">42 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="ShadowOrchid1145" style="--i:78" href="a/ShadowOrchid1145.html">
+      <div class="avatar sh2">S</div>
+      <div><div class="t-name">ShadowOrchid1145</div><div class="t-last">Active 13h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">7 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">33 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="ShadowSparrow7629" style="--i:79" href="a/ShadowSparrow7629.html">
+      <div class="avatar sh3">S</div>
+      <div><div class="t-name">ShadowSparrow7629</div><div class="t-last">Active 13h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">5 caught</span>
+        
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">31 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="SilentBadger5637" style="--i:80" href="a/SilentBadger5637.html">
+      <div class="avatar sh0">S</div>
+      <div><div class="t-name">SilentBadger5637</div><div class="t-last">Active 13h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">38 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="SilentHarbor8655" style="--i:81" href="a/SilentHarbor8655.html">
+      <div class="avatar sh1">S</div>
+      <div><div class="t-name">SilentHarbor8655</div><div class="t-last">Active 13h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">7 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">31 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="SilentMeadow7738" style="--i:82" href="a/SilentMeadow7738.html">
+      <div class="avatar sh2">S</div>
+      <div><div class="t-name">SilentMeadow7738</div><div class="t-last">Active 14h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="SilentQuartz4884" style="--i:83" href="a/SilentQuartz4884.html">
+      <div class="avatar sh3">S</div>
+      <div><div class="t-name">SilentQuartz4884</div><div class="t-last">Active 14h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">7 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        <span class="chip hundo"><svg class="ic ic-hundo" aria-hidden="true"><use href="#i-hundo"/></svg>1</span>
+        <span class="chip">37 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="StormyHeron885" style="--i:84" href="a/StormyHeron885.html">
+      <div class="avatar sh0">S</div>
+      <div><div class="t-name">StormyHeron885</div><div class="t-last">Active 14h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">34 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="StormyMaple8089" style="--i:85" href="a/StormyMaple8089.html">
+      <div class="avatar sh1">S</div>
+      <div><div class="t-name">StormyMaple8089</div><div class="t-last">Active 14h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">41 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="SwiftDune5073" style="--i:86" href="a/SwiftDune5073.html">
+      <div class="avatar sh2">S</div>
+      <div><div class="t-name">SwiftDune5073</div><div class="t-last">Active 16h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">36 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="SwiftHarbor4710" style="--i:87" href="a/SwiftHarbor4710.html">
+      <div class="avatar sh3">S</div>
+      <div><div class="t-name">SwiftHarbor4710</div><div class="t-last">Active 16h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        
+        
+        <span class="chip">40 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="SwiftMarlin2182" style="--i:88" href="a/SwiftMarlin2182.html">
+      <div class="avatar sh0">S</div>
+      <div><div class="t-name">SwiftMarlin2182</div><div class="t-last">Active 16h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">17 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="SwiftThistle9594" style="--i:89" href="a/SwiftThistle9594.html">
+      <div class="avatar sh1">S</div>
+      <div><div class="t-name">SwiftThistle9594</div><div class="t-last">Active 16h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">25 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="VelvetCinder2754" style="--i:90" href="a/VelvetCinder2754.html">
+      <div class="avatar sh2">V</div>
+      <div><div class="t-name">VelvetCinder2754</div><div class="t-last">Active 16h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">32 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="VelvetMoss9164" style="--i:91" href="a/VelvetMoss9164.html">
+      <div class="avatar sh3">V</div>
+      <div><div class="t-name">VelvetMoss9164</div><div class="t-last">Active 16h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">6 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">31 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="VelvetPebble1802" style="--i:92" href="a/VelvetPebble1802.html">
+      <div class="avatar sh0">V</div>
+      <div><div class="t-name">VelvetPebble1802</div><div class="t-last">Active 16h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">6 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>2</span>
+        
+        <span class="chip">38 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="WanderingBasil1020" style="--i:93" href="a/WanderingBasil1020.html">
+      <div class="avatar sh1">W</div>
+      <div><div class="t-name">WanderingBasil1020</div><div class="t-last">Active 17h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">23 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="WanderingEmber3198" style="--i:94" href="a/WanderingEmber3198.html">
+      <div class="avatar sh2">W</div>
+      <div><div class="t-name">WanderingEmber3198</div><div class="t-last">Active 17h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        
+        
+        <span class="chip">30 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="WanderingFalcon1187" style="--i:95" href="a/WanderingFalcon1187.html">
+      <div class="avatar sh3">W</div>
+      <div><div class="t-name">WanderingFalcon1187</div><div class="t-last">Active 17h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">4 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">39 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="WanderingHarbor6102" style="--i:96" href="a/WanderingHarbor6102.html">
+      <div class="avatar sh0">W</div>
+      <div><div class="t-name">WanderingHarbor6102</div><div class="t-last">Active 17h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">1 caught</span>
+        
+        
+        <span class="chip">5 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="WanderingOtter1965" style="--i:97" href="a/WanderingOtter1965.html">
+      <div class="avatar sh1">W</div>
+      <div><div class="t-name">WanderingOtter1965</div><div class="t-last">Active 18h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">2 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">20 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="WanderingOtter4279" style="--i:98" href="a/WanderingOtter4279.html">
+      <div class="avatar sh2">W</div>
+      <div><div class="t-name">WanderingOtter4279</div><div class="t-last">Active 18h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">3 caught</span>
+        
+        
+        <span class="chip">37 total shinies</span>
+      </div>
+    </a>
+    
+    <a class="trainer" data-account="WanderingThistle7302" style="--i:99" href="a/WanderingThistle7302.html">
+      <div class="avatar sh3">W</div>
+      <div><div class="t-name">WanderingThistle7302</div><div class="t-last">Active 18h ago</div></div>
+      <div class="t-chips">
+        <span class="chip p">5 caught</span>
+        <span class="chip shiny"><svg class="ic ic-sparkle" aria-hidden="true"><use href="#i-sparkle"/></svg>1</span>
+        
+        <span class="chip">38 total shinies</span>
+      </div>
+    </a>
+    
+  </div>
+  
+
+
+
+
+</div>
+
+<footer>
+  <div class="links">
+    <a class="chip d" href="https://discord.gg/Y72EpmWj9M" target="_blank" rel="noopener"><svg class="ic ic-chat" aria-hidden="true"><use href="#i-chat"/></svg> Discord</a>
+    <a class="chip g" href="https://github.com/gengily/dashboardpy" target="_blank" rel="noopener"><svg class="ic ic-code" aria-hidden="true"><use href="#i-code"/></svg> GitHub &middot; source code</a>
+  </div>
+  <p style="margin-bottom:8px;color:var(--on-var)">3 old / unrecognised accounts hidden</p>
+  <a href="raw.json">Raw payloads</a>
+</footer>
+<div class="theme" id="theme" role="dialog" aria-label="Theme">
+  <h3>Mode</h3>
+  <div class="seg" id="modes">
+    <button data-mode="auto"><svg class="ic ic-auto" aria-hidden="true"><use href="#i-auto"/></svg> Auto</button>
+    <button data-mode="light"><svg class="ic ic-sun" aria-hidden="true"><use href="#i-sun"/></svg> Light</button>
+    <button data-mode="dark"><svg class="ic ic-moon" aria-hidden="true"><use href="#i-moon"/></svg> Dark</button>
+  </div>
+  <h3>Color</h3>
+  <div class="sws" id="accents">
+    <button class="sw" data-accent="ocean" aria-label="Ocean" title="Ocean"><svg class="ic ic-check" aria-hidden="true"><use href="#i-check"/></svg></button>
+    <button class="sw" data-accent="rose" aria-label="Rose" title="Rose"><svg class="ic ic-check" aria-hidden="true"><use href="#i-check"/></svg></button>
+    <button class="sw" data-accent="forest" aria-label="Forest" title="Forest"><svg class="ic ic-check" aria-hidden="true"><use href="#i-check"/></svg></button>
+    <button class="sw" data-accent="violet" aria-label="Violet" title="Violet"><svg class="ic ic-check" aria-hidden="true"><use href="#i-check"/></svg></button>
+    <button class="sw" data-accent="sunset" aria-label="Sunset" title="Sunset"><svg class="ic ic-check" aria-hidden="true"><use href="#i-check"/></svg></button>
+  </div>
+</div>
+</main>
+<script>
+const KEY = "demo";
+const $ = id => document.getElementById(id);
+const showTraded = () => $('view').dataset.traded === '1';
+let tt;
+function toast(msg, undo){
+  const t = $('toast'); t.innerHTML = '';
+  const s = document.createElement('span'); s.textContent = msg; t.appendChild(s);
+  if (undo){ const b = document.createElement('button'); b.textContent = 'Undo';
+    b.onclick = () => { t.classList.remove('on'); undo(); }; t.appendChild(b); }
+  t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 6000);
+}
+function recount(card){
+  const held = [...card.querySelectorAll('.row')].filter(r => r.dataset.traded !== '1');
+  const by = {}; held.forEach(r => by[r.dataset.account] = (by[r.dataset.account] || 0) + 1);
+  card.querySelector('.held').textContent = held.length;
+  const acc = card.querySelector('.acc'); acc.innerHTML = '';
+  Object.entries(by).sort((a, b) => b[1] - a[1]).forEach(([a, n]) => {
+    const s = document.createElement('span'); s.className = 'chip p'; s.textContent = a + ' ×' + n; acc.appendChild(s); });
+  card.classList.toggle('gone', !held.length && !showTraded());
+}
+async function flip(row, to){
+  const btn = row.querySelector('.tbtn'), card = row.closest('.inv');
+  btn.disabled = true;
+  try {
+    const dh=+$('t-held').textContent,dt=+$('t-traded').textContent;$('t-held').textContent=dh+(to?-1:1);$('t-traded').textContent=dt+(to?1:-1);
+  } catch (e) { btn.disabled = false; toast('Could not save, try again'); return false; }
+  row.dataset.traded = to; row.classList.toggle('traded', !!to);
+  btn.textContent = to ? 'Undo' : 'Traded away'; btn.disabled = false;
+  row.hidden = !!to && !showTraded();
+  if (!to) card.classList.remove('gone');
+  recount(card);
+  return true;
+}
+async function trade(btn){
+  const row = btn.closest('.row'), card = btn.closest('.inv');
+  const to = row.dataset.traded === '1' ? 0 : 1;
+  if (await flip(row, to) && to){
+    toast(card.dataset.pokemon + ' (' + row.dataset.account + ') marked traded', () => flip(row, 0));
+  }
+}
+document.addEventListener('input', e => {
+  if (e.target.id !== 'q') return;
+  const v = e.target.value.toLowerCase().trim();
+  document.querySelectorAll('.inv').forEach(c => c.hidden = !c.dataset.name.includes(v));
+});
+
+/* ---- in-page navigation: swap content instead of reloading ---- */
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const SLIDE = 56;
+let navId = 0;
+async function go(url){
+  const id = ++navId;
+  let doc;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+    if (!doc.getElementById('view')) throw new Error('bad page');
+  } catch (e) { location.href = url; return; }
+  if (id !== navId) return;
+
+  const ov = $('view'), nv = doc.getElementById('view');
+  const dir = Math.sign(Number(nv.dataset.idx) - Number(ov.dataset.idx));
+  const animate = dir && !reduceMotion.matches;
+
+  if (animate) {
+    const out = ov.animate(
+      [{opacity: 1, transform: 'none'}, {opacity: 0, transform: 'translateX(' + (-dir * SLIDE) + 'px)'}],
+      {duration: 150, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards'});
+    try { await out.finished; } catch (e) {}
+    if (id !== navId) { out.cancel(); return; }
+  }
+
+  /* keep search text + opened cards when staying on the same screen */
+  const keep = {q: '', open: new Set()};
+  if (!dir) {
+    keep.q = $('q') ? $('q').value : '';
+    document.querySelectorAll('.inv[open]').forEach(d => keep.open.add(d.dataset.pokemon + '|' + d.dataset.shiny));
+  }
+
+  const oh = document.querySelector('.top'), nh = doc.querySelector('.top');
+  if (oh.outerHTML !== nh.outerHTML) oh.replaceWith(nh);
+  const ot = document.querySelector('nav.tabs'), nt = doc.querySelector('nav.tabs');
+  if (ot && nt) [...ot.children].forEach((a, i) => a.className = nt.children[i].className);
+  else if (ot) ot.remove();
+  else if (nt) ov.before(nt);
+  const of = document.querySelector('footer'), nf = doc.querySelector('footer');
+  if (of.outerHTML !== nf.outerHTML) of.replaceWith(nf);
+  if (!dir) nv.classList.add('static');  /* same screen: no intro animations again */
+  ov.replaceWith(nv);
+
+  nv.querySelectorAll('.inv').forEach(d => { if (keep.open.has(d.dataset.pokemon + '|' + d.dataset.shiny)) d.open = true; });
+  if (keep.q && $('q')) { $('q').value = keep.q; $('q').dispatchEvent(new Event('input', {bubbles: true})); }
+  if (dir) window.scrollTo(0, 0);
+
+  if (animate) nv.animate(
+    [{opacity: 0, transform: 'translateX(' + (dir * SLIDE) + 'px)'}, {opacity: 1, transform: 'none'}],
+    {duration: 450, easing: 'cubic-bezier(.34,1.3,.64,1)'});
+}
+function refresh(btn){
+  if (!reduceMotion.matches) btn.animate([{transform: 'rotate(0)'}, {transform: 'rotate(360deg)'}],
+    {duration: 600, easing: 'cubic-bezier(.34,1.2,.64,1)'});
+  go(location.href);
+}
+document.addEventListener('click', e => {
+  if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest('a[href]');
+  if (!a || a.target || a.origin !== location.origin || a.pathname !== location.pathname) return;
+  e.preventDefault();
+  if (a.href === location.href) return;
+  history.pushState(null, '', a.href);
+  go(a.href);
+});
+addEventListener('popstate', () => go(location.href));
+
+/* ---- live updates: merge new catches in place, no reload ---- */
+function merge(ol, nl, key, light){
+  const fresh = new Map([...nl.children].map(n => [n.dataset[key], n]));
+  const have = new Map();
+  [...ol.children].forEach(o => { if (fresh.has(o.dataset[key])) have.set(o.dataset[key], o); else o.remove(); });
+  let ref = ol.firstElementChild;
+  fresh.forEach((n, k) => {
+    let el = have.get(k);
+    if (el) {
+      if (light) {
+        const a = el.querySelector('.c-sub'), b = n.querySelector('.c-sub');
+        if (a && b && a.textContent !== b.textContent) a.textContent = b.textContent;
+      } else if (el.innerHTML !== n.innerHTML) el.innerHTML = n.innerHTML;
+      if (el.className !== n.className) el.className = n.className;
+    } else { el = n; el.style.setProperty('--i', 0); el.classList.add('fresh'); }
+    if (el === ref) ref = ref.nextElementSibling; else ol.insertBefore(el, ref);
+  });
+}
+async function live(){
+  const v = $('view');
+  if (document.hidden || v.dataset.idx === '1') return;
+  const id = navId;
+  let doc;
+  try {
+    const r = await fetch(location.href, {cache: 'no-store'});
+    if (!r.ok) return;
+    doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+  } catch (e) { return; }
+  const nv = doc.getElementById('view');
+  if (id !== navId || !nv || v !== $('view') || nv.dataset.idx !== v.dataset.idx) return;
+  const os = v.querySelectorAll('.stat'), ns = nv.querySelectorAll('.stat');
+  ns.forEach((n, i) => { if (os[i] && os[i].innerHTML !== n.innerHTML) os[i].innerHTML = n.innerHTML; });
+  let rebuild = false;
+  [['.trainers', 'account', false], ['.dex', 'key', false], ['.catches', 'id', true]].forEach(([sel, key, light]) => {
+    const o = v.querySelector(sel), n = nv.querySelector(sel);
+    if (!!o !== !!n) rebuild = true; else if (o) merge(o, n, key, light);
+  });
+  if (rebuild) go(location.href);
+}
+
+/* ---- theme: mode (auto/light/dark) + accent colour, saved in this browser ---- */
+const root = document.documentElement;
+function store(k, v){ try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
+function applyTheme(){
+  const mode = root.dataset.mode || 'auto', acc = root.dataset.accent || 'ocean';
+  document.querySelectorAll('#modes button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+  document.querySelectorAll('#accents .sw').forEach(b => b.classList.toggle('on', b.dataset.accent === acc));
+  const m = document.querySelector('meta[name=theme-color]');
+  if (m) m.content = getComputedStyle(root).getPropertyValue('--bg').trim();
+}
+function openTheme(on){
+  $('theme').classList.toggle('on', on);
+  document.querySelectorAll('[data-theme-toggle]').forEach(b => b.setAttribute('aria-expanded', on));
+}
+document.addEventListener('click', e => {
+  const tg = e.target.closest('[data-theme-toggle]'), box = $('theme');
+  if (tg) { openTheme(!box.classList.contains('on')); return; }
+  const mb = e.target.closest('#modes button'), ab = e.target.closest('#accents .sw');
+  if (mb) { mb.dataset.mode === 'auto' ? delete root.dataset.mode : root.dataset.mode = mb.dataset.mode;
+            store('hub-mode', mb.dataset.mode === 'auto' ? null : mb.dataset.mode); applyTheme(); return; }
+  if (ab) { ab.dataset.accent === 'ocean' ? delete root.dataset.accent : root.dataset.accent = ab.dataset.accent;
+            store('hub-accent', ab.dataset.accent === 'ocean' ? null : ab.dataset.accent); applyTheme(); return; }
+  if (!e.target.closest('#theme')) openTheme(false);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') openTheme(false); });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+applyTheme();
+
+document.addEventListener('visibilitychange', () => { if (!document.hidden) live(); });
+</script>
