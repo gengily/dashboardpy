@@ -3,6 +3,10 @@
 A lightweight, self-hosted dashboard for RegiBot catch reports. Tracks accounts, catches, shinies, hundos, and inventory using Python and SQLite.
 
 
+## Join Discord for support
+https://discord.gg/Y72EpmWj9M
+
+
 ## Preview
 https://gengily.github.io/dashboardpy/
 
